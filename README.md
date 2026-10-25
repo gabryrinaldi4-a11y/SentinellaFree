@@ -2,7 +2,7 @@
 
 Experimental Windows security software with a WPF interface, a local ClamAV adapter, optional Microsoft Defender integration, encrypted manual quarantine and versioned local backups.
 
-**Status: unsigned development version 0.2.** Windows Smart App Control blocked the new GUI on the development machine. Publishing this repository does not remove that block. No signing provider has accepted the project and integrated GUI validation remains pending. [Code signing policy](CODE_SIGNING.md).
+**Status: unsigned development version 0.3.** Windows Smart App Control blocked the new GUI on the development machine. Publishing this repository does not remove that block. No signing provider has accepted the project and integrated GUI validation remains pending. [Code signing policy](CODE_SIGNING.md).
 
 No equivalence or superiority compared with established antivirus products is claimed. There is no autonomous Windows on-access prevention driver, independent exploit prevention, browser/web filtering or VPN.
 
@@ -10,7 +10,11 @@ No equivalence or superiority compared with established antivirus products is cl
 
 ![WPF layout preview](docs/ui-layout-preview.png)
 
-This is a rendering of the actual XAML layout with event handlers removed, not a screenshot proving successful application execution. States shown as unverified have not been read by that preview.
+This is the 0.2 XAML layout preview, before the application-control panel was added, with event handlers removed; it is not a screenshot proving successful application execution. States shown as unverified have not been read by that preview.
+
+## Application control (0.3 development)
+
+The new Protections > Manage authorizations window authors a per-user AppLocker allowlist, tests candidate rules offline, and provides explicitly confirmed UAC actions for audit, enforcement and guarded restore. Windows is the base allowed location; allowing all of Program Files is a separate opt-in. Approvals use Windows Authenticode hashes and are rechecked against full file hashes before deployment. This does not override Smart App Control. Scripts, DLLs, macros, installers and execution inside approved hosts are outside this first version. Elevated deployment and actual blocking/restore have not been exercised end-to-end. See [APP_CONTROL.md](APP_CONTROL.md).
 
 ## Implemented modules
 
@@ -32,7 +36,7 @@ Windows x64, PowerShell and .NET SDK 10:
 
 Unsigned output: `artifacts/unsigned`. The script checks the common product/version metadata and writes `original-components.json`. It does not launch the app, apply a signature or modify protection settings.
 
-The [Windows workflow](.github/workflows/windows.yml) compiles the project on an isolated runner and saves an unsigned review artifact. It uses read-only repository permissions, action commits pinned by SHA and no signing credentials. A green build is not proof of complete antivirus efficacy or an integrated functional pass.
+The [Windows workflow](.github/workflows/windows.yml) compiles the project on an isolated runner, runs read-only application-control checks and saves an unsigned review artifact. It uses read-only repository permissions, action commits pinned by SHA and no signing credentials. A green build is not proof of complete antivirus efficacy or an integrated functional pass.
 
 For local engine operation, obtain the official ClamAV distribution according to its upstream instructions. The app expects `runtime/clamav` and `runtime/database` alongside the executable, or explicit `--runtime-root` and `--state-root` paths for isolated development. FreshClam can populate official databases once the engine is available. Harmless test signatures are not a full official database.
 
@@ -40,7 +44,7 @@ For local engine operation, obtain the official ClamAV distribution according to
 
 Source includes separate console suites for the original scanner/quarantine, ClamAV adapter, Windows policy validation/read-only audit and local backup/restore. Detection tests use a harmless custom marker and benign ZIP archives, never live malware. Privileged Windows modifications are not executed by the tests. Symlink checks explicitly skip where the required privilege is absent.
 
-Module checks passed during development, but the current build workflow only compiles. Tests must run in an appropriately permitted environment; do not work around a computer's execution policy to run them. Integrated GUI startup and a complete efficacy evaluation remain pending.
+Module checks passed during development, but the workflow also runs read-only application-control tests. Tests must run in an appropriately permitted environment; do not work around a computer's execution policy to run them. Integrated GUI startup and a complete efficacy evaluation remain pending.
 
 ## Maintenance and signing
 

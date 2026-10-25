@@ -8,9 +8,8 @@ $files=@('SentinellaFree.exe','SentinellaFree.dll','Sentinella.Core.dll')
 $manifest=foreach($name in $files){
  $path=Join-Path $OutputDirectory $name
  $info=(Get-Item -LiteralPath $path).VersionInfo
- if($info.ProductName -ne 'Sentinella Free' -or $info.FileVersion -ne '0.2.0.0'){throw ('Metadati inattesi: '+$name)}
+ if($info.ProductName -ne 'Sentinella Free' -or $info.FileVersion -ne '0.3.0.0'){throw ('Metadati inattesi: '+$name)}
  [pscustomobject]@{Name=$name;Product=$info.ProductName;Version=$info.FileVersion;SHA256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash;SigningStatus='Unsigned; requires approved signing service'}
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $OutputDirectory 'original-components.json') -Encoding utf8
 Write-Output 'Build completata. Nessuna firma applicata e nessuna applicazione avviata.'
-

@@ -4,9 +4,26 @@ using System.Windows;
 namespace Sentinella.Desktop;
 public partial class App : Application
 {
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (e.Args.FirstOrDefault() == "--app-control-admin")
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            try
+            {
+                if (e.Args.Length != 3) throw new IOException("Richiesta amministratore non valida.");
+                await AppControlBroker.RunElevatedAsync(e.Args[1], e.Args[2]);
+                MessageBox.Show("Operazione AppLocker completata. Smart App Control non e stato modificato.", "Sentinella", MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown(0);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n\nAggiorna lo stato. Eventuale backup: ProgramData\\SentinellaFree.AppControl\\original-policy.xml", "Sentinella: modifica non confermata", MessageBoxButton.OK, MessageBoxImage.Error);
+                Shutdown(13);
+            }
+            return;
+        }
         DispatcherUnhandledException += (_, fault) => { int ix=Array.IndexOf(e.Args,"--render-previews"); if(ix>=0 && ix+1<e.Args.Length){Directory.CreateDirectory(e.Args[ix+1]);File.WriteAllText(Path.Combine(e.Args[ix+1],"error.log"),fault.Exception.ToString());fault.Handled=true;Shutdown(1);} else {MessageBox.Show(fault.Exception.Message,"Sentinella",MessageBoxButton.OK,MessageBoxImage.Error);fault.Handled=true;} };
         string runtime = Path.Combine(AppContext.BaseDirectory, "runtime");
         string state = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SentinellaFree");
@@ -23,5 +40,3 @@ public partial class App : Application
         window.Show();
     }
 }
-
-

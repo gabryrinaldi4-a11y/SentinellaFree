@@ -7,3 +7,5 @@ Activity history, encrypted quarantine and local backups stay on the computer. E
 GitHub Actions runs the build on a hosted Windows runner. The workflow publishes only the unsigned build artifact and does not access the maintainer's personal PC or upload its diagnostics.
 
 Project maintenance is handled through the public repository owned by [gabryrinaldi4-a11y](https://github.com/gabryrinaldi4-a11y). Avoid sharing private information in public issues. No external signing application has yet been submitted.
+
+Application-control drafts and exported XML include the selected Windows SID, local paths and file hashes. The administrative backup stays under ProgramData with administrator/SYSTEM write permissions. These data are not uploaded automatically and must not be committed to the public repository.
