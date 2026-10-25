@@ -49,5 +49,7 @@ public partial class App : Application
         var window = new MainWindow(runtime,state,preview,smokeFile); MainWindow=window;
         if(preview is not null) { window.ShowInTaskbar=false; window.WindowStartupLocation=WindowStartupLocation.Manual; window.Left=-20000; window.Top=-20000; }
         window.Show();
+        if (e.Args.Contains("--show-continuous") && preview is null)
+            new ContinuousWindow(state, runtime, path => { window.NavScan.IsChecked = true; window.TargetPath.Text = path; }) { Owner = window }.Show();
     }
 }

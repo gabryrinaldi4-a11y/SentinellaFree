@@ -38,6 +38,7 @@ public sealed class ContinuousProtection : IDisposable
         if (!Eligible(path)) return false;
         var warning = bursts.Observe(path, now); if (warning is not null) Alert(warning);
         if (queue.Add(path, now)) return true;
+        Interlocked.Increment(ref incomplete);
         if (!overflowReported) { overflowReported = true; Alert(new(now, "Warning", "QueueOverflow", "Monitor", "Coda piena: copertura incompleta. Esegui una scansione manuale delle cartelle.")); }
         return false;
     }
@@ -68,7 +69,7 @@ public sealed class ContinuousProtection : IDisposable
         catch (OperationCanceledException) { throw; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or System.ComponentModel.Win32Exception)
         {
-            if (item.Value.Attempts < 2) queue.Add(path, now, item.Value.Attempts + 1);
+            if (item.Value.Attempts < 2) { if (!queue.Add(path, now, item.Value.Attempts + 1)) { Interlocked.Increment(ref incomplete); Alert(new(now, "Warning", "QueueOverflow", path, "Impossibile ritentare: coda piena, esegui una scansione manuale.")); } }
             else { Interlocked.Increment(ref incomplete); Alert(new(now, "Warning", "ScanError", path, ex.Message)); }
         }
         return true;

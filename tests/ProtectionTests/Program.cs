@@ -32,6 +32,8 @@ try
     string path=Path.Combine(root,"harmless.txt");await File.WriteAllTextAsync(path,"ordinary text");
     var fake=new FakeEngine();using var monitor=new ContinuousProtection(config,fake,state,runtime);
     Check(!monitor.Queue(Path.Combine(temp,"outside.txt"),now),"events outside configured folders rejected");
+    using(var flood=new ContinuousProtection(config,new FakeEngine(),state,runtime))
+    {for(int i=0;i<2001;i++)flood.Queue(Path.Combine(root,"queued-"+i),now);Check(flood.Snapshot().Pending==2000&&flood.Snapshot().Incomplete==1,"dropped watcher events increment incomplete coverage");}
     Check(monitor.Queue(path,now),"changed file queued");await monitor.ProcessNextAsync(now.AddSeconds(3),default);
     Check(monitor.Snapshot().Scanned==1&&monitor.Snapshot().Detections==0,"complete benign scan recorded");
     fake.Incomplete=true;monitor.Queue(path,now);await monitor.ProcessNextAsync(now.AddSeconds(3),default);
