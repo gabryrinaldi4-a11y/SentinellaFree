@@ -220,7 +220,7 @@ public partial class MainWindow : Window
     async void ExportReport(object sender,RoutedEventArgs e)=>await Work("Esportazione rapporto",async()=>
     {
         var d=new SaveFileDialog{Filter="Rapporto JSON|*.json",FileName="Sentinella-"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".json"};if(d.ShowDialog(this)!=true)return;
-        var report=new{Product="Sentinella 0.2",ExportedAt=DateTimeOffset.Now,Windows=audit,Engine=clamStatus,LastScan=lastReport,Activity=ActivityItems,Limits="No equivalence claim; Windows monitor is post-write, not execution prevention."};
+        var report=new{Product="Sentinella 0.4",ExportedAt=DateTimeOffset.Now,Windows=audit,Engine=clamStatus,LastScan=lastReport,Activity=ActivityItems,Limits="No equivalence claim; Windows monitor is post-write, not execution prevention."};
         await File.WriteAllTextAsync(d.FileName,JsonSerializer.Serialize(report,jsonOptions),Token);Record("Rapporto esportato",d.FileName);
     });
     async void StartMonitor(object sender,RoutedEventArgs e)=>await Work("Avvio monitor",async()=>

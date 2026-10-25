@@ -9,3 +9,7 @@ GitHub Actions runs the build on a hosted Windows runner. The workflow publishes
 Project maintenance is handled through the public repository owned by [gabryrinaldi4-a11y](https://github.com/gabryrinaldi4-a11y). Avoid sharing private information in public issues. No external signing application has yet been submitted.
 
 Application-control drafts and exported XML include the selected Windows SID, local paths and file hashes. The administrative backup stays under ProgramData with administrator/SYSTEM write permissions. These data are not uploaded automatically and must not be committed to the public repository.
+
+The optional background agent stores selected folder paths and local alerts in the user profile. Process command arguments are evaluated in memory and are not persisted. Activation, login startup and signature-network updates require explicit user choices. No telemetry endpoint is implemented.
+
+The separately installed browser extension stores rules in storage.local, has no content scripts and sends no browsing history or file samples. Its optional CERT Polska list download contacts hole.cert.pl, which can observe the request IP. No list is fetched until that source is configured. Automatic program updates are disabled in this build.

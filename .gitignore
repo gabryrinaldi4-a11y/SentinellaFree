@@ -4,3 +4,4 @@ artifacts/
 *.pfx
 *.p12
 *.key
+**/node_modules/

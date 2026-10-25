@@ -35,6 +35,17 @@ public partial class App : Application
             else if(e.Args[i] == "--smoke-file" && i+1<e.Args.Length) smokeFile = Path.GetFullPath(e.Args[++i]);
             else if(e.Args[i] == "--render-previews" && i+1<e.Args.Length) preview = Path.GetFullPath(e.Args[++i]);
         }
+        if (e.Args.Contains("--agent"))
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            try { await BackgroundAgent.Run(state, runtime); Shutdown(0); }
+            catch (Exception ex)
+            {
+                try { Sentinella.Core.AtomicJson.Write(AgentClient.SnapshotPath(state), new Sentinella.Core.ContinuousSnapshot(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, Environment.ProcessId, "Faulted", 0, 0, 0, 0, null, [], ex.Message)); } catch (Exception) { }
+                Shutdown(13);
+            }
+            return;
+        }
         var window = new MainWindow(runtime,state,preview,smokeFile); MainWindow=window;
         if(preview is not null) { window.ShowInTaskbar=false; window.WindowStartupLocation=WindowStartupLocation.Manual; window.Left=-20000; window.Top=-20000; }
         window.Show();

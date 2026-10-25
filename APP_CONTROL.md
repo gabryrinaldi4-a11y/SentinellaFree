@@ -38,7 +38,7 @@ Passare da blocco ad audit o ripristinare il criterio precedente elimina i blocc
 
 La pipeline Windows esegue test della generazione, della revoca, dei dati non validi, dei profili e dei fingerprint; poi usa cmdlet AppLocker nativi su copie di binari Windows innocui, senza eseguirle. Verifica autorizzazione, divieto, revoca, cambio nome e isolamento dell'utente con criteri offline. Nessun test installa criteri, avvia UAC, cambia servizi o modifica Smart App Control.
 
-L'applicazione elevata, il blocco effettivo e il ripristino non sono stati collaudati end-to-end. La nuova finestra non e stata eseguita su questo PC per il blocco Smart App Control gia documentato. Una compilazione o un test offline riuscito non prova questi passaggi.
+L'applicazione elevata, il blocco effettivo e il ripristino non sono stati collaudati end-to-end. Dopo il precedente blocco della 0.2 e stato osservato l'avvio normale della 0.3 non firmata con Smart App Control ancora attivo; questo non prova il funzionamento dell'intero modulo AppLocker. Una compilazione o un test offline riuscito non prova questi passaggi.
 
 ## Riferimenti Microsoft
 

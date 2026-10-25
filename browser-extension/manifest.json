@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Sentinella Web — sperimentale",
+  "version": "0.4.0",
+  "minimum_chrome_version": "121",
+  "description": "Blocca domini configurati e, su richiesta, quelli della lista pubblica CERT Polska. Nessuna cronologia inviata.",
+  "permissions": ["declarativeNetRequest", "storage", "alarms"],
+  "host_permissions": ["https://hole.cert.pl/*"],
+  "background": {"service_worker": "worker.js", "type": "module"},
+  "options_page": "options.html",
+  "action": {"default_title": "Configura Sentinella Web"}
+}

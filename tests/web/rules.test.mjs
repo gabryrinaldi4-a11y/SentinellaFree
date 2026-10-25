@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {normalizeDomain,parseDomains,createRules} from '../../browser-extension/rules.mjs';
+test('normalizes IDN and case without matching URL syntax',()=>{assert.equal(normalizeDomain('EXAMPLE.COM.'),'example.com');assert.equal(normalizeDomain('bücher.test'),'xn--bcher-kva.test');for(const bad of ['https://example.com','user@example.com','*.example.com','localhost','127.0.0.1','com','a..test','a.test/path'])assert.throws(()=>normalizeDomain(bad));});
+test('deduplicates and ignores comments',()=>assert.deepEqual(parseDomains('# example\nbad.test\nbad.test\nother.test'),['bad.test','other.test']));
+test('generates native domain boundaries and higher-priority explicit exceptions',()=>{const rules=createRules(['bad.test'],['allowed.bad.test']);assert.equal(rules[0].action.type,'allow');assert.equal(rules[0].priority,2);assert.equal(rules[1].action.type,'block');assert.deepEqual(rules[1].condition.requestDomains,['bad.test']);assert.ok(rules[1].condition.resourceTypes.includes('main_frame'));});
+test('new full list removes expired entries',()=>{const previous=createRules(['old.test','new.test'],[]),next=createRules(['new.test'],[]);assert.ok(previous[0].condition.requestDomains.includes('old.test'));assert.ok(!next[0].condition.requestDomains.includes('old.test'));});
+test('large lists are batched below dynamic rule quota',()=>{const rules=createRules(Array.from({length:10001},(_,i)=>`x${i}.test`),[]);assert.equal(rules.length,51);assert.equal(new Set(rules.map(r=>r.id)).size,rules.length);});
+test('disabled empty configuration has no block rules',()=>assert.deepEqual(createRules([],[]),[]));

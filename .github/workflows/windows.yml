@@ -24,6 +24,19 @@ jobs:
         run: ./build.ps1 -OutputDirectory "${{ runner.temp }}/Sentinella/unsigned"
       - name: Read-only application-control checks
         run: dotnet run --project tests/AppControlTests/AppControlTests.csproj -c Release -- --native
+      - name: Continuous protection and signed release checks
+        run: dotnet run --project tests/ProtectionTests/ProtectionTests.csproj -c Release
+      - name: Web domain rule checks
+        run: node --test tests/web/rules.test.mjs
+      - name: Install pinned browser test dependencies
+        working-directory: tests/web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install isolated test Chromium
+        working-directory: tests/web
+        run: npx playwright install chromium
+      - name: Verify blocking and exceptions in isolated Chromium
+        working-directory: tests/web
+        run: npm run test:browser
       - name: Upload unsigned build for review
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
